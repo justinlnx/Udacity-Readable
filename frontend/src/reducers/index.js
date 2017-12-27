@@ -1,5 +1,6 @@
-import { ADD_RECIPE, REMOVE_FROM_CALENDAR } from '../actions';
+import { ADD_RECIPE, REMOVE_FROM_CALENDAR, GET_ALL_POSTS } from '../actions';
 import { combineReducers } from 'redux';
+import * as API from '../apis';
 
 function food (state = {}, action) {
   switch (action.type) {
@@ -78,7 +79,19 @@ function calendar (state = initialCalendarState, action) {
   }
 }
 
+function posts (state = {}, action) {
+  switch (action.type) {
+    case GET_ALL_POSTS:
+      return {
+        action
+      }
+    default: 
+      return state;
+  }
+}
+
 export default combineReducers({
   food,
-  calendar
+  calendar,
+  posts
 });
