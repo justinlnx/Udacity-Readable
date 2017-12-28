@@ -1,4 +1,4 @@
-const api = 'http://penit.herokuapp.com';
+export const api = 'http://penit.herokuapp.com';
 
 let token = localStorage.token;
 
@@ -10,13 +10,12 @@ const headers = {
   'Authorization': token
 }
 
+export function getHeaders() {
+  return { headers };
+}
+
 export function getCategories() {
   return fetch(`${api}/categories`, { headers })
     .then(res => res.json())
     .then(data => data.categories);
-}
-
-export function getAllPosts() {
-  return fetch(`${api}/posts`, { headers })
-    .then(res => res.json());
 }

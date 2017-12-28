@@ -1,28 +1,27 @@
-import * as API from '../apis';
+import { api, getHeaders } from '../utils';
 
-export const ADD_RECIPE = 'ADD_RECIPE';
-export const REMOVE_FROM_CALENDAR = 'REMOVE_FROM_CALENDAR';
 export const GET_ALL_POSTS = 'GET_ALL_POSTS';
-
-export function addRecipe({ day, recipe, meal }) {
-  return {
-    type: ADD_RECIPE,
-    recipe,
-    day,
-    meal,
-  }
-}
-
-export function removeFromCalendar ({ day, meal }) {
-  return {
-    type: REMOVE_FROM_CALENDAR,
-    day,
-    meal,
-  }
-}
+export const GET_POSTS_BY_CATEGORY = 'GET_POSTS_BY_CATEGORY';
 
 export function getAllPosts () {
+  return function(dispatch) {
+    return fetch(`${api}/posts`, getHeaders())
+      .then(res => res.json())
+      .then(json => dispatch(receivePosts(json, GET_ALL_POSTS)));
+  }
+}
+
+function receivePosts(posts, type) {
   return {
-    type: GET_ALL_POSTS,
+    type: type,
+    posts,
+  }
+}
+
+export function getPostsByCategory (category) {
+  return function(dispatch) {
+    return fetch(`${api}/${category.toLowerCase()}/posts`, getHeaders())
+      .then(res => res.json())
+      .then(json => dispatch(receivePosts(json, GET_POSTS_BY_CATEGORY)));
   }
 }
