@@ -10,23 +10,49 @@ class Category extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sortOption: 'Most Favorite'
+      sortOption: 'Most Favorite',
+      sorted: []
     }
   }
 
-  handleChange = (event, index, value) => {
-    this.setState({ value });
-    switch (value) {
+  handleChange = (event, index, sortOption) => {
+    this.setState({ sortOption });
+    this.sortPosts(sortOption);
+  }
+
+  componentDidUpdate() {
+    if (this.props.posts && this.state.sorted !== this.props.posts) {
+      this.sortPosts(this.state.sortOption);
+    }
+  }
+
+  componentDidMount() {
+    if (this.props.posts && this.state.sorted !== this.props.posts) {
+      this.sortPosts(this.state.sortOption);
+    }
+  }
+
+  sortPosts = (option) => {
+    switch (option) {
       case 'Most Favorite':
-        return this.props.posts.sort(sortBy('-voteScore'));
-      case 'Least Favorite': 
-        return this.props.posts.sort(sortBy('voteScore'));
+        this.props.posts.sort(sortBy('-voteScore'));
+        this.setState({ sorted: this.props.posts });
+        return;
+      case 'Least Favorite':
+        this.props.posts.sort(sortBy('voteScore'));
+        this.setState({ sorted: this.props.posts });
+        return;
       case 'Most Recent':
-        return this.props.posts.sort(sortBy('timestamp'));
+        this.props.posts.sort(sortBy('timestamp'));
+        this.setState({ sorted: this.props.posts });
+        return;
       case 'Least Recent':
-        return this.props.posts.sort(sortBy('-timestamp'));
+        this.props.posts.sort(sortBy('-timestamp'));
+        this.setState({ sorted: this.props.posts });
+        return;
       default:
-        return this.props.posts;
+        this.setState({ sorted: this.props.posts });
+        return;
     }
   }
 
@@ -43,7 +69,7 @@ class Category extends Component {
           </DropDownMenu>
         </Toolbar>
         <List>
-          {this.props.posts && this.props.posts.map((post) => (
+          {this.state.sorted && this.state.sorted.map((post) => (
             <ListItem key={post.id}>
               <PostItem
                 {...post}

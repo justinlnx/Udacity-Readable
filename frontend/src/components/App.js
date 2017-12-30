@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
+import { Route, Link, withRouter } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import theme from './material_ui_raw_theme';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import Category from './Category';
-import { Route, withRouter } from 'react-router-dom';
 import * as Helper from '../utils';
-import { connect } from 'react-redux';
 import * as AllActions from '../actions';
-import { bindActionCreators } from 'redux';
+import CreatePost from './CreatePost';
+import Category from './Category';
 
 class App extends Component {
   state = {
@@ -45,27 +44,30 @@ class App extends Component {
     return (
       <MuiThemeProvider muiTheme={theme}>
         <div className="App">
-          <Tabs value={this.state.value} onChange={this.changeTab} >
-            <Tab label="All" value='all'>
-              <Route path='/all' render={() => (
+          {this.props.history.location.pathname !== '/create' && (
+            <Tabs value={this.state.value} onChange={this.changeTab} >
+              <Tab label="All" value='all'>
                 <Category 
                   posts={this.props.posts}
                   />
-              )}/>
-            </Tab>
-            {this.state.categories && this.state.categories.map(category => (
-              <Tab label={category.name} value={category.name} key={category.name}>
-                <Category 
-                  posts={this.props.postsByCategory}
-                />
-              </Tab>  
-            ))}
-          </Tabs>
+              </Tab>
+              {this.state.categories && this.state.categories.map(category => (
+                <Tab label={category.name} value={category.name} key={category.name}>
+                  <Category 
+                    posts={this.props.postsByCategory}
+                  />
+                </Tab>  
+              ))}
+            </Tabs>
+          )}
           <div className='add-button'>
-            <FloatingActionButton>
-              <ContentAdd />
-            </FloatingActionButton>
+            <Link to='/create' className='add-button'></Link>
           </div>
+          <Route path='/create' render={() => (
+            <CreatePost
+              submitForm={this.props.actions.CreatePost}
+            />
+          )}/>
         </div>
       </MuiThemeProvider>
     );
@@ -91,4 +93,4 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(App));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));
