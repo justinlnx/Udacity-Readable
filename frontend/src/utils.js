@@ -1,17 +1,8 @@
 export const api = 'http://penit.herokuapp.com';
+export const AuthToken = 'client-justin'
 
-let token = localStorage.token;
-
-if (!token) {
-  token = localStorage.token = Math.random().toString(36).substr(-8);
-}
-
-const headers = {
-  'Authorization': token
-}
-
-export function getHeaders() {
-  return { headers };
+export const headers = {
+  'Authorization': AuthToken
 }
 
 export function getCategories() {
