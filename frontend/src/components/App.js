@@ -54,7 +54,7 @@ class App extends Component {
               {this.state.categories && this.state.categories.map(category => (
                 <Tab label={category.name} value={category.name} key={category.name}>
                   <Category 
-                    posts={this.props.postsByCategory}
+                    posts={this.props.posts}
                   />
                 </Tab>  
               ))}
@@ -65,7 +65,11 @@ class App extends Component {
           </div>
           <Route path='/create' render={() => (
             <CreatePost
-              submitForm={this.props.actions.CreatePost}
+              submitForm={(title, author, body, cat) => {
+                this.props.actions.CreatePost(title, author, body, cat).then(() => {
+                  this.props.history.push('/all');
+                });
+              }}
             />
           )}/>
         </div>
@@ -77,7 +81,6 @@ class App extends Component {
 function mapStateToProps (state) {
   return {
     posts: state.posts.posts,
-    postsByCategory: state.posts.postsByCategory
   }
 }
 
