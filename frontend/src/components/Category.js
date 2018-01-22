@@ -43,11 +43,11 @@ class Category extends Component {
         this.setState({ sorted: this.props.posts });
         return;
       case 'Most Recent':
-        this.props.posts.sort(sortBy('timestamp'));
+        this.props.posts.sort(sortBy('-timestamp'));
         this.setState({ sorted: this.props.posts });
         return;
       case 'Least Recent':
-        this.props.posts.sort(sortBy('-timestamp'));
+        this.props.posts.sort(sortBy('timestamp'));
         this.setState({ sorted: this.props.posts });
         return;
       default:

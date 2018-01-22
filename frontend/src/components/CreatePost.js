@@ -45,11 +45,23 @@ class CreatePost extends Component {
   }
 
   submitForm = () => {
-    if (!this.state.title || !this.state.author || !this.state.body || !this.state.category) {
+    if (this.hasError()) {
       this.setState({ snackbarOpen: true });
+    } else {
+      this.props.submitForm(this.state.title, this.state.author, this.state.body, this.state.category.toLowerCase());
     }
+  }
 
-    this.props.submitForm(this.state.title, this.state.author, this.state.body, this.state.category.toLowerCase());
+  hasError = () => {
+    return !this.state.title || !this.state.author || !this.state.body || !this.state.category;
+  }
+
+  redirectTo = () => {
+    if(this.hasError()) {
+      return '/create';
+    } else {
+      return '/all';
+    }
   }
 
   handleRequestClose = () => {
