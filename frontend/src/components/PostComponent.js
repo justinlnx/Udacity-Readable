@@ -10,15 +10,25 @@ import MenuItem from 'material-ui/MenuItem';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import Snackbar from 'material-ui/Snackbar';
 
-class CreatePost extends Component {
+class PostComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      title: '',
-      author: '',
-      body: '',
-      category: '',
-      snackbarOpen: false,
+    if(this.props.mode === 'Create') {
+      this.state = {
+        title: '',
+        author: '',
+        body: '',
+        category: '',
+        snackbarOpen: false,
+      }
+    } else if (this.props.mode === 'Edit') {
+      this.state = {
+        title: this.props.post.title,
+        author: this.props.post.author,
+        body: this.props.post.body,
+        category: this.props.post.category,
+        snackbarOpen: false,
+      }
     }
   }
 
@@ -47,21 +57,19 @@ class CreatePost extends Component {
   submitForm = () => {
     if (this.hasError()) {
       this.setState({ snackbarOpen: true });
+    } else if (this.isEditing()) {
+      this.props.submitForm(this.props.post.id, this.state.title, this.state.body);
     } else {
       this.props.submitForm(this.state.title, this.state.author, this.state.body, this.state.category.toLowerCase());
     }
   }
 
-  hasError = () => {
-    return !this.state.title || !this.state.author || !this.state.body || !this.state.category;
+  isEditing = () => {
+    return this.props.mode === 'Edit';
   }
 
-  redirectTo = () => {
-    if(this.hasError()) {
-      return '/create';
-    } else {
-      return '/all';
-    }
+  hasError = () => {
+    return !this.state.title || !this.state.author || !this.state.body || !this.state.category;
   }
 
   handleRequestClose = () => {
@@ -74,8 +82,8 @@ class CreatePost extends Component {
     return (
       <div>
         <AppBar
-          title='Create Post'
-          iconElementLeft={<Link className='close-search' to='/'></Link>}
+          title={`${this.props.mode} Post`}
+          iconElementLeft={<Link className='close-search' to={`/${this.props.tab}`}></Link>}
           iconElementRight={<IconButton><NavigationCheck onClick={this.submitForm} /></IconButton>}
         />
         <Paper zDepth={2}>
@@ -91,6 +99,7 @@ class CreatePost extends Component {
             className='form-item'
             underlineShow={false}
             value={this.state.author}
+            disabled={this.isEditing()}
             onChange={this.updateAuthor} />
           <Divider />
           <TextField
@@ -104,11 +113,12 @@ class CreatePost extends Component {
             floatingLabelText='Category'
             className='form-item'
             value={this.state.category}
+            disabled={this.isEditing()}
             onChange={this.updateSelectedCategory}
           >
-            <MenuItem value={'React'} primaryText='React' />
-            <MenuItem value={'Redux'} primaryText='Redux' />
-            <MenuItem value={'Udacity'} primaryText='Udacity' />
+            <MenuItem value={'react'} primaryText='React' />
+            <MenuItem value={'redux'} primaryText='Redux' />
+            <MenuItem value={'udacity'} primaryText='Udacity' />
           </SelectField>
         </Paper>
         <Snackbar
@@ -122,4 +132,4 @@ class CreatePost extends Component {
   }
 }
 
-export default CreatePost;
+export default PostComponent;
