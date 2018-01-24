@@ -7,7 +7,7 @@ import theme from './material_ui_raw_theme';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import * as Helper from '../utils';
 import * as AllActions from '../actions';
-import CreatePost from './CreatePost';
+import PostComponent from './PostComponent';
 import Category from './Category';
 
 class App extends Component {
@@ -40,11 +40,20 @@ class App extends Component {
     return posts ? null : posts.filter(p => p.category === category);
   }
 
+  notCreateOrEditUrl = () => {
+    return this.props.history.location.pathname !== '/create' && !this.props.history.location.pathname.includes('/edit');
+  }
+
+  getPostIdFromUrl = () => {
+    let id = this.props.location.pathname.slice(6);
+    return this.props.posts.find(x => x.id === id);
+  }
+
   render() {
     return (
       <MuiThemeProvider muiTheme={theme}>
         <div className="App">
-          {this.props.history.location.pathname !== '/create' && (
+          {this.notCreateOrEditUrl() && (
             <Tabs value={this.state.value} onChange={this.changeTab} >
               <Tab label="All" value='all'>
                 <Category 
@@ -64,14 +73,31 @@ class App extends Component {
             <Link to='/create' className='add-button'></Link>
           </div>
           <Route path='/create' render={() => (
-            <CreatePost
+            <PostComponent
               submitForm={(title, author, body, cat) => {
                 this.props.actions.CreatePost(title, author, body, cat).then(() => {
-                  this.props.history.push('/all');
+                  this.props.history.push(`/${this.state.value}`);
                 });
               }}
+              mode={'Create'}
+              tab={this.state.value}
+              post={null}
             />
           )}/>
+          <Route path='/edit/:id' render={() => {
+            return (
+              <PostComponent
+                submitForm={(id, title, body) => {
+                  this.props.actions.UpdatePost(id, title, body).then(() => {
+                    this.props.history.push(`/${this.state.value}`);
+                  });
+                }}
+                mode={'Edit'}
+                tab={this.state.value}
+                post={this.getPostIdFromUrl()}
+              />
+            )
+          }} />
         </div>
       </MuiThemeProvider>
     );

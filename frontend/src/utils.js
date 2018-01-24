@@ -2,7 +2,8 @@ export const api = 'http://penit.herokuapp.com';
 export const AuthToken = 'client-justin'
 
 export const headers = {
-  'Authorization': AuthToken
+  'Authorization': AuthToken,
+  'Content-Type': 'application/json'
 }
 
 export function getCategories() {

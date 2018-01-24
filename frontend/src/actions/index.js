@@ -1,10 +1,10 @@
-import { api, AuthToken, headers } from '../utils';
+import { api, headers } from '../utils';
 
 export const GET_ALL_POSTS = 'GET_ALL_POSTS';
 export const GET_POSTS_BY_CATEGORY = 'GET_POSTS_BY_CATEGORY';
 export const CREATE_POST_SUCCEEDED = 'CREATE_POST_SUCCEEDED';
 export const DELETE_POST_SUCCEEDED = 'DELETE_POST_SUCCEEDED';
-export const UPDATE_POST_VOTE_SCORE_SUCCEEDED = 'UPDATE_POST_VOTE_SCORE_SUCCEEDED';
+export const UPDATE_POST_SUCCEEDED = 'UPDATE_POST_VOTE_SCORE_SUCCEEDED';
 
 export function getAllPosts () {
   return function(dispatch) {
@@ -29,7 +29,6 @@ export function getPostsByCategory (category) {
   }
 }
 
-
 export function CreatePost(title, author, bodyContent, category) {
   let id = Math.random().toString(36).substr(-8);
   let timestamp = Date.now();
@@ -44,10 +43,7 @@ export function CreatePost(title, author, bodyContent, category) {
   return function(dispatch) {
     return fetch(`${api}/posts`, {
       method: 'POST',
-      headers: {
-        'Authorization': AuthToken,
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body
     })
     .then(res => res.json())
@@ -66,10 +62,7 @@ export function DeletePost(id) {
   return function(dispatch) {
     return fetch(`${api}/posts/${id}`, {
       method: 'DELETE',
-      headers: {
-        'Authorization': AuthToken,
-        'Content-Type': 'application/json',
-      }
+      headers: headers
     })
     .then(res => {
       if(res.status === 200) {
@@ -96,20 +89,33 @@ export function UpdatePostVoteScore(id, option) {
   return function(dispatch) {
     return fetch(`${api}/posts/${id}`, {
       method: 'POST',
-      headers: {
-        'Authorization': AuthToken,
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body
     })
     .then(res => res.json())
-    .then(json => dispatch(UpdatePostVoteScoreSucceeded(json)));
+    .then(json => dispatch(UpdatePostSucceeded(json)));
   }
 }
 
-function UpdatePostVoteScoreSucceeded(json) {
+function UpdatePostSucceeded(json) {
   return {
-    type: UPDATE_POST_VOTE_SCORE_SUCCEEDED,
+    type: UPDATE_POST_SUCCEEDED,
     post: json
+  }
+}
+
+export function UpdatePost(id, title, content) {
+  let body = JSON.stringify({
+    "title": title,
+    "body": content
+  });
+  return function(dispatch) {
+    return fetch(`${api}/posts/${id}`, {
+      method: 'PUT',
+      headers: headers,
+      body
+    })
+    .then(res => res.json())
+    .then(json => dispatch(UpdatePostSucceeded(json)));
   }
 }

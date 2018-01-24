@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AllActions from '../actions';
+import { Route } from 'react-router-dom';
 
 class PostItem extends Component {
   state = {
@@ -55,9 +56,12 @@ class PostItem extends Component {
             icon={<i className='material-icons'>delete</i>}
             onClick={this.deleteItem}
           />
-          <FlatButton
-            icon={<i className='material-icons'>edit</i>}
-          />
+          <Route render={({history}) => (
+            <FlatButton
+              icon={<i className='material-icons'>edit</i>}
+              onClick={() => { history.push(`/edit/${item.id}`) }}
+            />
+          )} />
         </CardActions>
       </Card>
     )
