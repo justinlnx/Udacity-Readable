@@ -119,3 +119,10 @@ export function UpdatePost(id, title, content) {
     .then(json => dispatch(UpdatePostSucceeded(json)));
   }
 }
+
+export function GetCommentsByPost(postId) {
+  return function(dispatch) {
+    return fetch(`${api}/posts/${postId}/comments`, { headers })
+      .then(res => res.json());
+  }
+}
