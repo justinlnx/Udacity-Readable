@@ -7,8 +7,9 @@ import theme from './material_ui_raw_theme';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import * as Helper from '../utils';
 import * as AllActions from '../actions';
-import PostComponent from './PostComponent';
+import PostView from './PostComponent';
 import Category from './Category';
+import CommentView from './CommentModal';
 
 class App extends Component {
   state = {
@@ -41,7 +42,9 @@ class App extends Component {
   }
 
   notCreateOrEditUrl = () => {
-    return this.props.history.location.pathname !== '/create' && !this.props.history.location.pathname.includes('/edit');
+    return this.props.history.location.pathname !== '/create' &&
+      !this.props.history.location.pathname.includes('/edit') && 
+      !this.props.history.location.pathname.includes('/comment');
   }
 
   getPostIdFromUrl = () => {
@@ -72,8 +75,8 @@ class App extends Component {
           <div className='add-button'>
             <Link to='/create' className='add-button'></Link>
           </div>
-          <Route path='/create' render={() => (
-            <PostComponent
+          <Route exact path='/create' render={() => (
+            <PostView
               submitForm={(title, author, body, cat) => {
                 this.props.actions.CreatePost(title, author, body, cat).then(() => {
                   this.props.history.push(`/${this.state.value}`);
@@ -86,7 +89,7 @@ class App extends Component {
           )}/>
           <Route path='/edit/:id' render={() => {
             return (
-              <PostComponent
+              <PostView
                 submitForm={(id, title, body) => {
                   this.props.actions.UpdatePost(id, title, body).then(() => {
                     this.props.history.push(`/${this.state.value}`);
@@ -97,6 +100,15 @@ class App extends Component {
                 post={this.getPostIdFromUrl()}
               />
             )
+          }} />
+          <Route path='/create/:id/comment' render={() => {
+            return (
+              <CommentView
+                mode={'Create'}
+                comment={null}
+                tab={this.state.value}
+              />
+            );
           }} />
         </div>
       </MuiThemeProvider>

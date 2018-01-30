@@ -5,20 +5,16 @@ import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import Snackbar from 'material-ui/Snackbar';
 
-class PostView extends Component {
+class CommentView extends Component {
   constructor(props) {
     super(props);
     if(this.props.mode === 'Create') {
       this.state = {
-        title: '',
         author: '',
         body: '',
-        category: '',
         snackbarOpen: false,
       }
     } else if (this.props.mode === 'Edit') {
@@ -26,16 +22,9 @@ class PostView extends Component {
         title: this.props.post.title,
         author: this.props.post.author,
         body: this.props.post.body,
-        category: this.props.post.category,
         snackbarOpen: false,
       }
     }
-  }
-
-  updateTitle = (event) => {
-    this.setState({ 
-      title: event.target.value
-    });
   }
 
   updateAuthor = (event) => {
@@ -50,17 +39,13 @@ class PostView extends Component {
     });
   }
 
-  updateSelectedCategory = (event, index, category) => {
-    this.setState({ category });
-  }
-
   submitForm = () => {
     if (this.hasError()) {
       this.setState({ snackbarOpen: true });
     } else if (this.isEditing()) {
-      this.props.submitForm(this.props.post.id, this.state.title, this.state.body);
+      // this.props.submitForm(this.props.post.id, this.state.title, this.state.body);
     } else {
-      this.props.submitForm(this.state.title, this.state.author, this.state.body, this.state.category.toLowerCase());
+      // this.props.submitForm(this.state.title, this.state.author, this.state.body, this.state.category.toLowerCase());
     }
   }
 
@@ -69,7 +54,7 @@ class PostView extends Component {
   }
 
   hasError = () => {
-    return !this.state.title || !this.state.author || !this.state.body || !this.state.category;
+    return !this.state.author || !this.state.body;
   }
 
   handleRequestClose = () => {
@@ -82,18 +67,11 @@ class PostView extends Component {
     return (
       <div>
         <AppBar
-          title={`${this.props.mode} Post`}
+          title={`${this.props.mode} Comment`}
           iconElementLeft={<Link className='close-search' to={`/${this.props.tab}`}></Link>}
           iconElementRight={<IconButton><NavigationCheck onClick={this.submitForm} /></IconButton>}
         />
         <Paper zDepth={2}>
-          <TextField
-            hintText='Title'
-            className='form-item'
-            underlineShow={false}
-            value={this.state.title}
-            onChange={this.updateTitle} />
-          <Divider />
           <TextField
             hintText='Author'
             className='form-item'
@@ -108,18 +86,6 @@ class PostView extends Component {
             underlineShow={false}
             value={this.state.body}
             onChange={this.updateBody} />
-          <Divider />
-          <SelectField
-            floatingLabelText='Category'
-            className='form-item'
-            value={this.state.category}
-            disabled={this.isEditing()}
-            onChange={this.updateSelectedCategory}
-          >
-            <MenuItem value={'react'} primaryText='React' />
-            <MenuItem value={'redux'} primaryText='Redux' />
-            <MenuItem value={'udacity'} primaryText='Udacity' />
-          </SelectField>
         </Paper>
         <Snackbar
           open={this.state.snackbarOpen}
@@ -132,4 +98,4 @@ class PostView extends Component {
   }
 }
 
-export default PostView;
+export default CommentView;
