@@ -40,3 +40,8 @@ body {
   margin-left: 20px;
   width: 80% !important;
 }
+
+.post-body {
+  font-size: large;
+  margin-bottom: 20px;
+}

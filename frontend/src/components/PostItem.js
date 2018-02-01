@@ -30,47 +30,62 @@ class PostItem extends Component {
   render() {
     const {item} = this.state;
     return (
-      <Card>
-        <CardTitle title={item.title} subtitle={`${item.author} - ${this.converTimestamp(item.timestamp)}`} />
-        <CardText>
-          <div className='post-body'>
+      <div>
+        <Card>
+          <CardTitle
+            title={item.title}
+            subtitle={`${item.author} - ${this.converTimestamp(item.timestamp)}`}
+          />
+          <CardText>
+            <div className='post-body'>
               {item.body}
-          </div>
-        </CardText>
-        <CardActions>
-          <FlatButton
-            icon={<i className='material-icons'>thumb_up</i>}
-            label={item.voteScore.toString()}
-            onClick={this.updateVoteScore.bind(this, 'upVote')}
-          />
-          <FlatButton
-            icon={<i className='material-icons'>thumb_down</i>}
-            label={item.voteScore.toString()}
-            onClick={this.updateVoteScore.bind(this, 'downVote')}
-          />
-          <FlatButton
-            icon={<i className="material-icons">mode_comment</i>}
-            label={item.commentCount.toString()}
-          />
-          <FlatButton
-            icon={<i className='material-icons'>delete</i>}
-            onClick={this.deleteItem}
-          />
-          <Route render={({history}) => (
+            </div>
+          </CardText>
+          <CardActions>
             <FlatButton
-              icon={<i className='material-icons'>edit</i>}
-              onClick={() => { history.push(`/edit/${item.id}`) }}
+              icon={<i className='material-icons'>thumb_up</i>}
+              label={item.voteScore.toString()}
+              onClick={this.updateVoteScore.bind(this, 'upVote')}
             />
-          )} />
-        </CardActions>
-      </Card>
+            <FlatButton
+              icon={<i className='material-icons'>thumb_down</i>}
+              label={item.voteScore.toString()}
+              onClick={this.updateVoteScore.bind(this, 'downVote')}
+            />
+            <Route render={({history}) => (
+              <FlatButton
+                icon={<i className='material-icons'>mode_comment</i>}
+                label={item.commentCount.toString()}
+                onClick={() => { history.push(`/create/${item.id}/comment`) }}
+              />
+            )} />
+            <FlatButton
+              icon={<i className='material-icons'>delete</i>}
+              onClick={this.deleteItem}
+            />
+            <Route render={({history}) => (
+              <FlatButton
+                icon={<i className='material-icons'>edit</i>}
+                onClick={() => { history.push(`/edit/${item.id}`) }}
+              />
+            )} />
+            <Route render={({history}) => (
+              <FlatButton
+                icon={<i className='material-icons'>open_in_new</i>}
+                onClick={() => { history.push(`/view/${item.id}`) }}
+              />
+            )} />
+          </CardActions>
+        </Card>
+      </div>
     )
   }
 }
 
 function mapStateToProps (state) {
   return {
-    posts: state.posts.posts
+    posts: state.posts.posts,
+    comments: state.comments.comments
   }
 }
 

@@ -9,8 +9,14 @@ import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import Snackbar from 'material-ui/Snackbar';
+import { List } from 'material-ui/List';
+import Subheader from 'material-ui/Subheader';
+import CommentItem from './CommentItem';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as AllActions from '../actions';
 
-class PostComponent extends Component {
+class PostView extends Component {
   constructor(props) {
     super(props);
     if(this.props.mode === 'Create') {
@@ -21,7 +27,7 @@ class PostComponent extends Component {
         category: '',
         snackbarOpen: false,
       }
-    } else if (this.props.mode === 'Edit') {
+    } else {
       this.state = {
         title: this.props.post.title,
         author: this.props.post.author,
@@ -29,6 +35,12 @@ class PostComponent extends Component {
         category: this.props.post.category,
         snackbarOpen: false,
       }
+    }
+  }
+
+  componentDidMount() {
+    if(this.props.mode === 'View') {
+      this.props.actions.GetCommentsByPost(this.props.post.id);
     }
   }
 
@@ -92,6 +104,7 @@ class PostComponent extends Component {
             className='form-item'
             underlineShow={false}
             value={this.state.title}
+            disabled={this.props.mode === 'View'}
             onChange={this.updateTitle} />
           <Divider />
           <TextField
@@ -99,7 +112,7 @@ class PostComponent extends Component {
             className='form-item'
             underlineShow={false}
             value={this.state.author}
-            disabled={this.isEditing()}
+            disabled={this.isEditing() || this.props.mode === 'View'}
             onChange={this.updateAuthor} />
           <Divider />
           <TextField
@@ -107,13 +120,14 @@ class PostComponent extends Component {
             className='form-item'
             underlineShow={false}
             value={this.state.body}
+            disabled={this.props.mode === 'View'}
             onChange={this.updateBody} />
           <Divider />
           <SelectField
             floatingLabelText='Category'
             className='form-item'
             value={this.state.category}
-            disabled={this.isEditing()}
+            disabled={this.isEditing() || this.props.mode === 'View'}
             onChange={this.updateSelectedCategory}
           >
             <MenuItem value={'react'} primaryText='React' />
@@ -121,6 +135,15 @@ class PostComponent extends Component {
             <MenuItem value={'udacity'} primaryText='Udacity' />
           </SelectField>
         </Paper>
+        {this.props.mode === 'View' && (
+          <List>
+            <Subheader>Comments</Subheader>
+            {this.props.comments.length > 0 && this.props.comments.map((comment) => {
+              return <CommentItem key={comment.id} cid={comment.id} />
+            })}
+            <Divider inset={true}/>
+          </List>
+        )}
         <Snackbar
           open={this.state.snackbarOpen}
           message="Please fill in the form to submit"
@@ -132,4 +155,23 @@ class PostComponent extends Component {
   }
 }
 
-export default PostComponent;
+function mapStateToProps (state) {
+  return {
+    posts: state.posts.posts,
+    comments: state.comments.comments
+  }
+}
+
+function mapDispatchToProps (dispatch) {
+  return {
+    actions: bindActionCreators(
+      Object.assign(
+        {},
+        AllActions,
+      ),
+    dispatch
+    )
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostView);

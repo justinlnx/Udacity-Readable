@@ -5,6 +5,10 @@ export const GET_POSTS_BY_CATEGORY = 'GET_POSTS_BY_CATEGORY';
 export const CREATE_POST_SUCCEEDED = 'CREATE_POST_SUCCEEDED';
 export const DELETE_POST_SUCCEEDED = 'DELETE_POST_SUCCEEDED';
 export const UPDATE_POST_SUCCEEDED = 'UPDATE_POST_VOTE_SCORE_SUCCEEDED';
+export const RECEIVE_POST_COMMENTS = 'RECEIVE_POST_COMMENTS';
+export const UPDATE_POST_COMMENT_SUCCEEDED = 'UPDATE_POST_COMMENT_SUCCEEDED';
+export const CREATE_COMMENT_SUCCEEDED = 'CREATE_COMMENT_SUCCEEDED';
+export const DELETE_COMMENT_SUCCEEDED = 'DELETE_COMMENT_SUCCEEDED';
 
 export function getAllPosts () {
   return function(dispatch) {
@@ -117,5 +121,94 @@ export function UpdatePost(id, title, content) {
     })
     .then(res => res.json())
     .then(json => dispatch(UpdatePostSucceeded(json)));
+  }
+}
+
+export function GetCommentsByPost(postId) {
+  return function(dispatch) {
+    return fetch(`${api}/posts/${postId}/comments`, { headers })
+      .then(res => res.json())
+      .then(json => dispatch(ReceivePostComments(json)));
+  }
+}
+
+function ReceivePostComments(json) {
+  return {
+    type: RECEIVE_POST_COMMENTS,
+    comments: json
+  }
+}
+
+export function UpdateCommentVoteScore(id, option) {
+  let body = JSON.stringify({
+    "id": id,
+    "option": option
+  });
+  return function(dispatch) {
+    return fetch(`${api}/comments/${id}`, {
+      method: 'POST',
+      headers: headers,
+      body
+    })
+    .then(res => res.json())
+    .then(json => dispatch(UpdatePostCommentSucceeded(json)));
+  }
+}
+
+function UpdatePostCommentSucceeded(json) {
+  return {
+    type: UPDATE_POST_COMMENT_SUCCEEDED,
+    comment: json
+  }
+}
+
+export function CreateComment(postId, author, bodyContent) {
+  let id = Math.random().toString(36).substr(-8);
+  let timestamp = Date.now();
+  let body = JSON.stringify({
+    "author": author,
+    "body": bodyContent,
+    "timestamp": timestamp,
+    "id": id,
+    "parentId": postId
+  });
+  return function(dispatch) {
+    return fetch(`${api}/comments`, {
+      method: 'POST',
+      headers: headers,
+      body
+    })
+    .then(res => res.json())
+    .then(json => dispatch(CreateCommentSucceeded(json)));
+  }
+}
+
+function CreateCommentSucceeded(json) {
+  return {
+    type: CREATE_COMMENT_SUCCEEDED,
+    comment: json
+  }
+}
+
+export function DeleteComment(id) {
+  return function(dispatch) {
+    return fetch(`${api}/comments/${id}`, {
+      method: 'DELETE',
+      headers: headers
+    })
+    .then(res => {
+      if(res.status === 200) {
+        return res.json().then(json => {
+          dispatch(DeleteCommentSucceeded(json));
+        })
+      }
+    })
+  }
+}
+
+function DeleteCommentSucceeded(json) {
+  return {
+    type: DELETE_COMMENT_SUCCEEDED,
+    comment: json
   }
 }
