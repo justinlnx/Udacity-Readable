@@ -7,9 +7,9 @@ import theme from './material_ui_raw_theme';
 import {Tabs, Tab} from 'material-ui/Tabs';
 import * as Helper from '../utils';
 import * as AllActions from '../actions';
-import PostView from './PostComponent';
+import PostView from './PostView';
 import Category from './Category';
-import CommentView from './CommentModal';
+import CommentView from './CommentView';
 
 class App extends Component {
   state = {
@@ -44,7 +44,8 @@ class App extends Component {
   notCreateOrEditUrl = () => {
     return this.props.history.location.pathname !== '/create' &&
       !this.props.history.location.pathname.includes('/edit') && 
-      !this.props.history.location.pathname.includes('/comment');
+      !this.props.history.location.pathname.includes('/comment') &&
+      !this.props.history.location.pathname.includes('/view');
   }
 
   getPostIdFromUrl = () => {
@@ -96,6 +97,18 @@ class App extends Component {
                   });
                 }}
                 mode={'Edit'}
+                tab={this.state.value}
+                post={this.getPostIdFromUrl()}
+              />
+            )
+          }} />
+          <Route path='/view/:id' render={() => {
+            return (
+              <PostView
+                submitForm={(id, title, body) => {
+                  this.props.history.push(`/${this.state.value}`);
+                }}
+                mode={'View'}
                 tab={this.state.value}
                 post={this.getPostIdFromUrl()}
               />

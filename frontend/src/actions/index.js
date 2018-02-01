@@ -8,6 +8,7 @@ export const UPDATE_POST_SUCCEEDED = 'UPDATE_POST_VOTE_SCORE_SUCCEEDED';
 export const RECEIVE_POST_COMMENTS = 'RECEIVE_POST_COMMENTS';
 export const UPDATE_POST_COMMENT_SUCCEEDED = 'UPDATE_POST_COMMENT_SUCCEEDED';
 export const CREATE_COMMENT_SUCCEEDED = 'CREATE_COMMENT_SUCCEEDED';
+export const DELETE_COMMENT_SUCCEEDED = 'DELETE_COMMENT_SUCCEEDED';
 
 export function getAllPosts () {
   return function(dispatch) {
@@ -172,7 +173,7 @@ export function CreateComment(postId, author, bodyContent) {
     "parentId": postId
   });
   return function(dispatch) {
-    return fetch(`${api}/posts`, {
+    return fetch(`${api}/comments`, {
       method: 'POST',
       headers: headers,
       body
@@ -185,6 +186,29 @@ export function CreateComment(postId, author, bodyContent) {
 function CreateCommentSucceeded(json) {
   return {
     type: CREATE_COMMENT_SUCCEEDED,
+    comment: json
+  }
+}
+
+export function DeleteComment(id) {
+  return function(dispatch) {
+    return fetch(`${api}/comments/${id}`, {
+      method: 'DELETE',
+      headers: headers
+    })
+    .then(res => {
+      if(res.status === 200) {
+        return res.json().then(json => {
+          dispatch(DeleteCommentSucceeded(json));
+        })
+      }
+    })
+  }
+}
+
+function DeleteCommentSucceeded(json) {
+  return {
+    type: DELETE_COMMENT_SUCCEEDED,
     comment: json
   }
 }

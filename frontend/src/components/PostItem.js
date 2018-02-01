@@ -1,23 +1,14 @@
 import React, { Component } from 'react';
 import { Card, CardActions, CardTitle, CardText } from 'material-ui/Card';
-import { List } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
-import Divider from 'material-ui/Divider';
 import FlatButton from 'material-ui/FlatButton';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AllActions from '../actions';
 import { Route } from 'react-router-dom';
-import CommentItem from './CommentItem';
 
 class PostItem extends Component {
   state = {
-    item: this.props,
-    openModal: false
-  }
-
-  componentDidMount() {
-    this.props.actions.GetCommentsByPost(this.props.id);
+    item: this.props
   }
 
   converTimestamp = (timestamp) => {
@@ -44,24 +35,11 @@ class PostItem extends Component {
           <CardTitle
             title={item.title}
             subtitle={`${item.author} - ${this.converTimestamp(item.timestamp)}`}
-            actAsExpander={true}
-            showExpandableButton={true}
           />
-          <CardText expandable={true} >
+          <CardText>
             <div className='post-body'>
               {item.body}
             </div>
-            <Divider/>
-            <List>
-              <Subheader>Comments</Subheader>
-              {this.props.comments.length > 0 && this.props.comments.map((comment) => {
-                if(comment.parentId === item.id) {
-                  return <CommentItem key={comment.id} cid={comment.id} />
-                }
-                return null;
-              })}
-              <Divider inset={true}/>
-            </List>
           </CardText>
           <CardActions>
             <FlatButton
@@ -89,6 +67,12 @@ class PostItem extends Component {
               <FlatButton
                 icon={<i className='material-icons'>edit</i>}
                 onClick={() => { history.push(`/edit/${item.id}`) }}
+              />
+            )} />
+            <Route render={({history}) => (
+              <FlatButton
+                icon={<i className='material-icons'>open_in_new</i>}
+                onClick={() => { history.push(`/view/${item.id}`) }}
               />
             )} />
           </CardActions>

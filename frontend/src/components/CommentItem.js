@@ -20,7 +20,7 @@ class CommentItem extends Component {
   }
 
   deleteItem = () => {
-    console.log('delete comment', this.props.cid);
+    this.props.actions.DeleteComment(this.props.cid);
   }
 
   render() {
