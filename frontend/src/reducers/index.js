@@ -5,7 +5,8 @@ import {
   DELETE_POST_SUCCEEDED,
   UPDATE_POST_SUCCEEDED,
   RECEIVE_POST_COMMENTS,
-  UPDATE_POST_COMMENT_SUCCEEDED
+  UPDATE_POST_COMMENT_SUCCEEDED,
+  CREATE_COMMENT_SUCCEEDED
 } from '../actions';
 import { combineReducers } from 'redux';
 
@@ -79,6 +80,11 @@ function comments(state = { comments: [] }, action) {
       state.comments.find(x => x.id === action.comment.id).voteScore = action.comment.voteScore;
       state.comments.find(x => x.id === action.comment.id).body = action.comment.body;
       state.comments.find(x => x.id === action.comment.id).timestamp = action.comment.timestamp;
+      return state;
+    case CREATE_COMMENT_SUCCEEDED:
+      console.log(state.comments);
+      console.log(action.comment);
+      state.comments.push(action.comment);
       return state;
     default: 
      return state;

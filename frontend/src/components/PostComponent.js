@@ -10,7 +10,7 @@ import MenuItem from 'material-ui/MenuItem';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import Snackbar from 'material-ui/Snackbar';
 
-class PostView extends Component {
+class PostComponent extends Component {
   constructor(props) {
     super(props);
     if(this.props.mode === 'Create') {
@@ -132,4 +132,4 @@ class PostView extends Component {
   }
 }
 
-export default PostView;
+export default PostComponent;

@@ -7,6 +7,7 @@ export const DELETE_POST_SUCCEEDED = 'DELETE_POST_SUCCEEDED';
 export const UPDATE_POST_SUCCEEDED = 'UPDATE_POST_VOTE_SCORE_SUCCEEDED';
 export const RECEIVE_POST_COMMENTS = 'RECEIVE_POST_COMMENTS';
 export const UPDATE_POST_COMMENT_SUCCEEDED = 'UPDATE_POST_COMMENT_SUCCEEDED';
+export const CREATE_COMMENT_SUCCEEDED = 'CREATE_COMMENT_SUCCEEDED';
 
 export function getAllPosts () {
   return function(dispatch) {
@@ -156,6 +157,34 @@ export function UpdateCommentVoteScore(id, option) {
 function UpdatePostCommentSucceeded(json) {
   return {
     type: UPDATE_POST_COMMENT_SUCCEEDED,
+    comment: json
+  }
+}
+
+export function CreateComment(postId, author, bodyContent) {
+  let id = Math.random().toString(36).substr(-8);
+  let timestamp = Date.now();
+  let body = JSON.stringify({
+    "author": author,
+    "body": bodyContent,
+    "timestamp": timestamp,
+    "id": id,
+    "parentId": postId
+  });
+  return function(dispatch) {
+    return fetch(`${api}/posts`, {
+      method: 'POST',
+      headers: headers,
+      body
+    })
+    .then(res => res.json())
+    .then(json => dispatch(CreateCommentSucceeded(json)));
+  }
+}
+
+function CreateCommentSucceeded(json) {
+  return {
+    type: CREATE_COMMENT_SUCCEEDED,
     comment: json
   }
 }

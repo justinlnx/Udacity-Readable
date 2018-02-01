@@ -102,8 +102,17 @@ class App extends Component {
             )
           }} />
           <Route path='/create/:id/comment' render={() => {
+            let regex = /\s*\/\s*/;
+            let splitStr = this.props.location.pathname.split(regex);
+            let postId = splitStr[2];
+            console.log(postId);
             return (
               <CommentView
+                submitForm={(author, body) => {
+                  this.props.actions.CreateComment(postId, author, body).then(() => {
+                    this.props.history.push(`/${this.state.value}`);
+                  });
+                }}
                 mode={'Create'}
                 comment={null}
                 tab={this.state.value}

@@ -45,7 +45,7 @@ class CommentView extends Component {
     } else if (this.isEditing()) {
       // this.props.submitForm(this.props.post.id, this.state.title, this.state.body);
     } else {
-      // this.props.submitForm(this.state.title, this.state.author, this.state.body, this.state.category.toLowerCase());
+      this.props.submitForm(this.state.author, this.state.body);
     }
   }
 
