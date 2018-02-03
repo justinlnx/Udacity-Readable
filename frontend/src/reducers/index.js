@@ -37,6 +37,12 @@ function posts (state = {}, action) {
       return {
         posts: state.posts
       }
+    case CREATE_COMMENT_SUCCEEDED:
+      state.posts.find(x => x.id === action.comment.parentId).commentCount += 1;
+      return state;
+    case DELETE_COMMENT_SUCCEEDED:
+      state.posts.find(x => x.id === action.comment.parentId).commentCount -= 1;
+      return state;
     default: 
       return state;
   }
@@ -45,9 +51,7 @@ function posts (state = {}, action) {
 function comments(state = { comments: [] }, action) {
   switch(action.type) {
     case RECEIVE_POST_COMMENTS: 
-      if(action.comments.length > 0) {
-        state.comments = action.comments;
-      }
+      state.comments = action.comments;
       return {
         comments: state.comments
       }

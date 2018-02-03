@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -10,11 +10,11 @@ import MenuItem from 'material-ui/MenuItem';
 import NavigationCheck from 'material-ui/svg-icons/navigation/check';
 import Snackbar from 'material-ui/Snackbar';
 import { List } from 'material-ui/List';
-import Subheader from 'material-ui/Subheader';
 import CommentItem from './CommentItem';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AllActions from '../actions';
+import FlatButton from 'material-ui/FlatButton';
 
 class PostView extends Component {
   constructor(props) {
@@ -137,7 +137,14 @@ class PostView extends Component {
         </Paper>
         {this.props.mode === 'View' && (
           <List>
-            <Subheader>Comments</Subheader>
+            <Route render={({history}) => (
+              <FlatButton
+                label="Comments"
+                labelPosition="before"        
+                icon={<i className='material-icons'>add</i>}
+                onClick={() => { history.push(`/create/${this.props.post.id}/comment`) }}
+              />
+            )} />
             {this.props.comments.length > 0 && this.props.comments.map((comment) => {
               return <CommentItem key={comment.id} cid={comment.id} />
             })}

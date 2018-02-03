@@ -162,6 +162,24 @@ function UpdatePostCommentSucceeded(json) {
   }
 }
 
+export function UpdateComment(id, content) {
+  let timestamp = Date.now();
+  let body = JSON.stringify({
+    "id": id,
+    "body": content,
+    "timestamp": timestamp
+  });
+  return function(dispatch) {
+    return fetch(`${api}/comments/${id}`, {
+      method: 'PUT',
+      headers: headers,
+      body
+    })
+    .then(res => res.json())
+    .then(json => dispatch(UpdatePostCommentSucceeded(json)));
+  }
+}
+
 export function CreateComment(postId, author, bodyContent) {
   let id = Math.random().toString(36).substr(-8);
   let timestamp = Date.now();

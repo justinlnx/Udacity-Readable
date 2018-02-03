@@ -72,7 +72,7 @@ class PostItem extends Component {
             <Route render={({history}) => (
               <FlatButton
                 icon={<i className='material-icons'>open_in_new</i>}
-                onClick={() => { history.push(`/view/${item.id}`) }}
+                onClick={() => { history.push(`/${item.category}/${item.id}`) }}
               />
             )} />
           </CardActions>

@@ -4,6 +4,7 @@ import FlatButton from 'material-ui/FlatButton';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AllActions from '../actions';
+import { Route } from 'react-router-dom';
 
 class CommentItem extends Component {
   state = {
@@ -11,7 +12,6 @@ class CommentItem extends Component {
   }
 
   updateVoteScore = (option) => {
-    console.log(`${option}, ${this.props.cid}`);
     this.props.actions.UpdateCommentVoteScore(this.props.cid, option).then(() => {
       this.setState({
         item: this.props.comments.find(x => x.id === this.props.cid)
@@ -45,6 +45,12 @@ class CommentItem extends Component {
               icon={<i className='material-icons'>delete</i>}
               onClick={this.deleteItem}
             />
+            <Route render={({history}) => (
+              <FlatButton
+                icon={<i className='material-icons'>edit</i>}
+                onClick={() => { history.push(`/comment/${item.id}`) }}
+              />
+            )} />
           </div>
         }
         secondaryTextLines={2}
