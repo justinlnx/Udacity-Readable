@@ -42,15 +42,31 @@ class App extends Component {
   }
 
   notCreateOrEditUrl = () => {
-    return this.props.history.location.pathname !== '/create' &&
-      !this.props.history.location.pathname.includes('/edit') && 
-      !this.props.history.location.pathname.includes('/comment') &&
-      !this.props.history.location.pathname.includes('/view');
+    let path = this.props.history.location.pathname.toLowerCase();
+    return path === '/all' || path === '/react' || path === '/redux' || path === '/udacity';
   }
 
-  getPostIdFromUrl = () => {
-    let id = this.props.location.pathname.slice(6);
+  getPostFromUrlId = () => {
+    let id = this.getIdFromUrl();
     return this.props.posts.find(x => x.id === id);
+  }
+
+  getIdFromUrl = () => {
+    let path = this.props.location.pathname;
+    return path.substring(path.lastIndexOf('/') + 1);
+  }
+
+  getPostViewComponent = () => {
+    return (
+      <PostView
+        submitForm={(id, title, body) => {
+          this.props.history.push(`/${this.state.value}`);
+        }}
+        mode={'View'}
+        tab={this.state.value}
+        post={this.getPostFromUrlId()}
+      />
+    );
   }
 
   render() {
@@ -98,27 +114,23 @@ class App extends Component {
                 }}
                 mode={'Edit'}
                 tab={this.state.value}
-                post={this.getPostIdFromUrl()}
+                post={this.getPostFromUrlId()}
               />
             )
           }} />
-          <Route path='/view/:id' render={() => {
-            return (
-              <PostView
-                submitForm={(id, title, body) => {
-                  this.props.history.push(`/${this.state.value}`);
-                }}
-                mode={'View'}
-                tab={this.state.value}
-                post={this.getPostIdFromUrl()}
-              />
-            )
+          <Route path='/react/:id' render={() => {
+            return this.getPostViewComponent();
+          }} />
+          <Route path='/redux/:id' render={() => {
+            return this.getPostViewComponent();
+          }} />
+          <Route path='/udacity/:id' render={() => {
+            return this.getPostViewComponent();
           }} />
           <Route path='/create/:id/comment' render={() => {
             let regex = /\s*\/\s*/;
             let splitStr = this.props.location.pathname.split(regex);
             let postId = splitStr[2];
-            console.log(postId);
             return (
               <CommentView
                 submitForm={(author, body) => {
@@ -132,6 +144,21 @@ class App extends Component {
               />
             );
           }} />
+          <Route path='/comment/:id' render={() => {
+            let commentId = this.getIdFromUrl();
+            return (
+              <CommentView
+                submitForm={(body) => {
+                  this.props.actions.UpdateComment(commentId, body).then(() => {
+                    this.props.history.push(`/${this.state.value}`);
+                  });
+                }}
+                mode={'Edit'}
+                comment={this.props.comments.find(x => x.id === commentId)}
+                tab={this.state.value}
+              />
+            );
+          }} />
         </div>
       </MuiThemeProvider>
     );
@@ -141,6 +168,7 @@ class App extends Component {
 function mapStateToProps (state) {
   return {
     posts: state.posts.posts,
+    comments: state.comments.comments
   }
 }
 

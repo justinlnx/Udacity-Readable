@@ -19,9 +19,9 @@ class CommentView extends Component {
       }
     } else if (this.props.mode === 'Edit') {
       this.state = {
-        title: this.props.post.title,
-        author: this.props.post.author,
-        body: this.props.post.body,
+        title: this.props.comment.title,
+        author: this.props.comment.author,
+        body: this.props.comment.body,
         snackbarOpen: false,
       }
     }
@@ -43,7 +43,7 @@ class CommentView extends Component {
     if (this.hasError()) {
       this.setState({ snackbarOpen: true });
     } else if (this.isEditing()) {
-      // this.props.submitForm(this.props.post.id, this.state.title, this.state.body);
+      this.props.submitForm(this.state.body);
     } else {
       this.props.submitForm(this.state.author, this.state.body);
     }
