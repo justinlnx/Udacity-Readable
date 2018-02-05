@@ -10,6 +10,7 @@ import * as AllActions from '../actions';
 import PostView from './PostView';
 import Category from './Category';
 import CommentView from './CommentView';
+import NoContent from './NoContent';
 
 class App extends Component {
   state = {
@@ -18,7 +19,9 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    this.props.history.push('/all');
+    if(this.props.history.location.pathname !== '/notfound') {
+      this.props.history.push('/all');
+    }
     Helper.getCategories().then(categories => {
       this.setState({ categories });
     });
@@ -48,7 +51,7 @@ class App extends Component {
 
   getPostFromUrlId = () => {
     let id = this.getIdFromUrl();
-    return this.props.posts.find(x => x.id === id);
+      return this.props.posts.find(x => x.id === id);
   }
 
   getIdFromUrl = () => {
@@ -119,13 +122,25 @@ class App extends Component {
             )
           }} />
           <Route path='/react/:id' render={() => {
-            return this.getPostViewComponent();
+            if(this.props.posts) {
+              return this.getPostViewComponent();
+            }
+            this.props.history.push('/notfound');
+            return <NoContent />;
           }} />
           <Route path='/redux/:id' render={() => {
-            return this.getPostViewComponent();
+            if(this.props.posts) {
+              return this.getPostViewComponent();
+            }
+            this.props.history.push('/notfound');
+            return <NoContent />;
           }} />
           <Route path='/udacity/:id' render={() => {
-            return this.getPostViewComponent();
+            if(this.props.posts) {
+              return this.getPostViewComponent();
+            }
+            this.props.history.push('/notfound');
+            return <NoContent />;
           }} />
           <Route path='/create/:id/comment' render={() => {
             let regex = /\s*\/\s*/;
@@ -159,6 +174,9 @@ class App extends Component {
               />
             );
           }} />
+          <Route path='/notfound' render={() => (
+            <NoContent />
+          )} />
         </div>
       </MuiThemeProvider>
     );
