@@ -33,6 +33,7 @@ class PostView extends Component {
         author: this.props.post.author,
         body: this.props.post.body,
         category: this.props.post.category,
+        voteScore: this.props.post.voteScore,
         snackbarOpen: false,
       }
     }
@@ -90,6 +91,15 @@ class PostView extends Component {
     });
   };
 
+  updateVoteScore = (option) => {
+    this.props.actions.UpdatePostVoteScore(this.props.post.id, option).then(() => {
+      this.setState({
+        voteScore: this.props.posts.find(x => x.id === this.props.post.id).voteScore
+      });
+      console.log('updated', this.props)
+    });
+  }
+
   render() {
     return (
       <div>
@@ -137,9 +147,37 @@ class PostView extends Component {
         </Paper>
         {this.props.mode === 'View' && (
           <List>
+            <FlatButton
+              icon={<i className='material-icons'>thumb_up</i>}
+              label={this.state.voteScore.toString()}
+              onClick={this.updateVoteScore.bind(this, 'upVote')}
+            />
+            <FlatButton
+              icon={<i className='material-icons'>thumb_down</i>}
+              label={this.state.voteScore.toString()}
+              onClick={this.updateVoteScore.bind(this, 'downVote')}
+            />
             <Route render={({history}) => (
               <FlatButton
-                label="Comments"
+                icon={<i className='material-icons'>delete</i>}
+                onClick={() => {
+                  this.props.actions.DeletePost(this.props.post.id).then(
+                    history.push('/all')
+                  );
+                }}
+              />
+            )} />
+            <Route render={({history}) => (
+              <FlatButton
+                label="Edit Post"
+                labelPosition="before"        
+                icon={<i className='material-icons'>edit</i>}
+                onClick={() => { history.push(`/edit/${this.props.post.id}`) }}
+              />
+            )} />
+            <Route render={({history}) => (
+              <FlatButton
+                label={`Comments ${this.props.post.commentCount}`}
                 labelPosition="before"        
                 icon={<i className='material-icons'>add</i>}
                 onClick={() => { history.push(`/create/${this.props.post.id}/comment`) }}
