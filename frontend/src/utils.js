@@ -11,3 +11,8 @@ export function getCategories() {
     .then(res => res.json())
     .then(data => data.categories);
 }
+
+export function getPostById (id) {
+  return fetch(`${api}/posts/${id}`, { headers })
+      .then(res => res.json());
+}

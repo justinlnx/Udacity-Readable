@@ -19,7 +19,8 @@ class App extends Component {
   }
 
   componentDidMount = () => {
-    if(this.props.history.location.pathname !== '/notfound') {
+    let path = this.props.history.location.pathname; 
+    if(path !== '/notfound' || !path.includes('react') || !path.includes('redux') || !path.includes('udacity')) {
       this.props.history.push('/all');
     }
     Helper.getCategories().then(categories => {
@@ -51,7 +52,11 @@ class App extends Component {
 
   getPostFromUrlId = () => {
     let id = this.getIdFromUrl();
+    if(this.props.posts) {
       return this.props.posts.find(x => x.id === id);
+    } else {
+      return id;
+    }
   }
 
   getIdFromUrl = () => {
@@ -122,25 +127,61 @@ class App extends Component {
             )
           }} />
           <Route path='/react/:id' render={() => {
-            if(this.props.posts) {
+            if(!this.props.posts) {
+              return (
+                <PostView
+                  submitForm={(id, title, body) => {
+                    this.props.history.push(`/${this.state.value}`);
+                  }}
+                  mode={'View'}
+                  tab={this.state.value}
+                  post={this.getIdFromUrl()}
+                  redirect={() => {
+                    this.props.history.push('/notfound');
+                  }}
+                />
+              );
+            } else {
               return this.getPostViewComponent();
             }
-            this.props.history.push('/notfound');
-            return <NoContent />;
           }} />
           <Route path='/redux/:id' render={() => {
-            if(this.props.posts) {
+            if(!this.props.posts) {
+              return (
+                <PostView
+                  submitForm={(id, title, body) => {
+                    this.props.history.push(`/${this.state.value}`);
+                  }}
+                  mode={'View'}
+                  tab={this.state.value}
+                  post={this.getIdFromUrl()}
+                  redirect={() => {
+                    this.props.history.push('/notfound');
+                  }}
+                />
+              );
+            } else {
               return this.getPostViewComponent();
             }
-            this.props.history.push('/notfound');
-            return <NoContent />;
           }} />
           <Route path='/udacity/:id' render={() => {
-            if(this.props.posts) {
+            if(!this.props.posts) {
+              return (
+                <PostView
+                  submitForm={(id, title, body) => {
+                    this.props.history.push(`/${this.state.value}`);
+                  }}
+                  mode={'View'}
+                  tab={this.state.value}
+                  post={this.getIdFromUrl()}
+                  redirect={() => {
+                    this.props.history.push('/notfound');
+                  }}
+                />
+              );
+            } else {
               return this.getPostViewComponent();
             }
-            this.props.history.push('/notfound');
-            return <NoContent />;
           }} />
           <Route path='/create/:id/comment' render={() => {
             let regex = /\s*\/\s*/;

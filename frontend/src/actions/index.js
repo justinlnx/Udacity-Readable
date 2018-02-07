@@ -1,6 +1,7 @@
 import { api, headers } from '../utils';
 
 export const GET_ALL_POSTS = 'GET_ALL_POSTS';
+export const GET_POST = 'GET_POST';
 export const GET_POSTS_BY_CATEGORY = 'GET_POSTS_BY_CATEGORY';
 export const CREATE_POST_SUCCEEDED = 'CREATE_POST_SUCCEEDED';
 export const DELETE_POST_SUCCEEDED = 'DELETE_POST_SUCCEEDED';
@@ -23,6 +24,11 @@ function receivePosts(posts, type) {
     type: type,
     posts,
   }
+}
+
+export function getPostById (id) {
+  return fetch(`${api}/posts/${id}`, { headers })
+      .then(res => res.json());
 }
 
 export function getPostsByCategory (category) {

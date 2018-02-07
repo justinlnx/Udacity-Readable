@@ -15,6 +15,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as AllActions from '../actions';
 import FlatButton from 'material-ui/FlatButton';
+import * as Helper from '../utils';
 
 class PostView extends Component {
   constructor(props) {
@@ -24,24 +25,49 @@ class PostView extends Component {
         title: '',
         author: '',
         body: '',
-        category: '',
+        category: 'react',
         snackbarOpen: false,
       }
     } else {
-      this.state = {
-        title: this.props.post.title,
-        author: this.props.post.author,
-        body: this.props.post.body,
-        category: this.props.post.category,
-        voteScore: this.props.post.voteScore,
-        snackbarOpen: false,
+      if(typeof this.props.post !== "string") {
+        this.state = {
+          title: this.props.post.title,
+          author: this.props.post.author,
+          body: this.props.post.body,
+          category: this.props.post.category,
+          voteScore: this.props.post.voteScore,
+          snackbarOpen: false,
+        }
+      } else {
+        this.state = {
+          receivedPost: null
+        }
       }
     }
   }
 
   componentDidMount() {
     if(this.props.mode === 'View') {
-      this.props.actions.GetCommentsByPost(this.props.post.id);
+      let postId = typeof this.props.post === 'string' ? this.props.post : this.props.post.id;
+      console.log(postId);
+      this.props.actions.GetCommentsByPost(postId);
+    }
+    if(typeof this.props.post === 'string') {
+      Helper.getPostById(this.props.post).then(json => {
+        if(json.id) {
+          console.log(json);
+          this.setState({
+            title: json.title,
+            author: json.author,
+            body: json.body,
+            category: json.category,
+            voteScore: json.voteScore,
+            snackbarOpen: false,
+          });
+        } else {
+          this.props.redirect();
+        }
+      })
     }
   }
 
@@ -101,100 +127,108 @@ class PostView extends Component {
   }
 
   render() {
+    console.log('state ', this.state);
     return (
       <div>
-        <AppBar
-          title={`${this.props.mode} Post`}
-          iconElementLeft={<Link className='close-search' to={`/${this.props.tab}`}></Link>}
-          iconElementRight={<IconButton><NavigationCheck onClick={this.submitForm} /></IconButton>}
-        />
-        <Paper zDepth={2}>
-          <TextField
-            hintText='Title'
-            className='form-item'
-            underlineShow={false}
-            value={this.state.title}
-            disabled={this.props.mode === 'View'}
-            onChange={this.updateTitle} />
-          <Divider />
-          <TextField
-            hintText='Author'
-            className='form-item'
-            underlineShow={false}
-            value={this.state.author}
-            disabled={this.isEditing() || this.props.mode === 'View'}
-            onChange={this.updateAuthor} />
-          <Divider />
-          <TextField
-            hintText='Body'
-            className='form-item'
-            underlineShow={false}
-            value={this.state.body}
-            disabled={this.props.mode === 'View'}
-            onChange={this.updateBody} />
-          <Divider />
-          <SelectField
-            floatingLabelText='Category'
-            className='form-item'
-            value={this.state.category}
-            disabled={this.isEditing() || this.props.mode === 'View'}
-            onChange={this.updateSelectedCategory}
-          >
-            <MenuItem value={'react'} primaryText='React' />
-            <MenuItem value={'redux'} primaryText='Redux' />
-            <MenuItem value={'udacity'} primaryText='Udacity' />
-          </SelectField>
-        </Paper>
-        {this.props.mode === 'View' && (
-          <List>
-            <FlatButton
-              icon={<i className='material-icons'>thumb_up</i>}
-              label={this.state.voteScore.toString()}
-              onClick={this.updateVoteScore.bind(this, 'upVote')}
-            />
-            <FlatButton
-              icon={<i className='material-icons'>thumb_down</i>}
-              label={this.state.voteScore.toString()}
-              onClick={this.updateVoteScore.bind(this, 'downVote')}
-            />
-            <Route render={({history}) => (
+        {/* {this.state && !(this.state.receivedPost || this.state.author) && (
+          <h3>Loading</h3>
+        )} */}
+        {this.state && this.state.category && (
+          <div>
+          <AppBar
+            title={`${this.props.mode} Post`}
+            iconElementLeft={<Link className='close-search' to={`/${this.props.tab}`}></Link>}
+            iconElementRight={<IconButton><NavigationCheck onClick={this.submitForm} /></IconButton>}
+          />
+          <Paper zDepth={2}>
+            <TextField
+              hintText='Title'
+              className='form-item'
+              underlineShow={false}
+              value={this.state.title}
+              disabled={this.props.mode === 'View'}
+              onChange={this.updateTitle} />
+            <Divider />
+            <TextField
+              hintText='Author'
+              className='form-item'
+              underlineShow={false}
+              value={this.state.author}
+              disabled={this.isEditing() || this.props.mode === 'View'}
+              onChange={this.updateAuthor} />
+            <Divider />
+            <TextField
+              hintText='Body'
+              className='form-item'
+              underlineShow={false}
+              value={this.state.body}
+              disabled={this.props.mode === 'View'}
+              onChange={this.updateBody} />
+            <Divider />
+            <SelectField
+              floatingLabelText='Category'
+              className='form-item'
+              value={this.state.category}
+              disabled={this.isEditing() || this.props.mode === 'View'}
+              onChange={this.updateSelectedCategory}
+            >
+              <MenuItem value={'react'} primaryText='React' />
+              <MenuItem value={'redux'} primaryText='Redux' />
+              <MenuItem value={'udacity'} primaryText='Udacity' />
+            </SelectField>
+          </Paper>
+          {this.props.mode === 'View' && (
+            <List>
               <FlatButton
-                icon={<i className='material-icons'>delete</i>}
-                onClick={() => {
-                  this.props.actions.DeletePost(this.props.post.id).then(
-                    history.push('/all')
-                  );
-                }}
+                icon={<i className='material-icons'>thumb_up</i>}
+                label={this.state.voteScore.toString()}
+                onClick={this.updateVoteScore.bind(this, 'upVote')}
               />
-            )} />
-            <Route render={({history}) => (
               <FlatButton
-                label="Edit Post"
-                labelPosition="before"        
-                icon={<i className='material-icons'>edit</i>}
-                onClick={() => { history.push(`/edit/${this.props.post.id}`) }}
+                icon={<i className='material-icons'>thumb_down</i>}
+                label={this.state.voteScore.toString()}
+                onClick={this.updateVoteScore.bind(this, 'downVote')}
               />
-            )} />
-            <Route render={({history}) => (
-              <FlatButton
-                label={`Comments ${this.props.post.commentCount}`}
-                labelPosition="before"        
-                icon={<i className='material-icons'>add</i>}
-                onClick={() => { history.push(`/create/${this.props.post.id}/comment`) }}
-              />
-            )} />
-            {this.props.comments.length > 0 && this.props.comments.map((comment) => {
-              return <CommentItem key={comment.id} cid={comment.id} />
-            })}
-            <Divider inset={true}/>
-          </List>
+              <Route render={({history}) => (
+                <FlatButton
+                  icon={<i className='material-icons'>delete</i>}
+                  onClick={() => {
+                    this.props.actions.DeletePost(this.props.post.id).then(
+                      history.push('/all')
+                    );
+                  }}
+                />
+              )} />
+              <Route render={({history}) => (
+                <FlatButton
+                  label="Edit Post"
+                  labelPosition="before"        
+                  icon={<i className='material-icons'>edit</i>}
+                  onClick={() => { history.push(`/edit/${this.props.post.id}`) }}
+                />
+              )} />
+              <Route render={({history}) => (
+                <FlatButton
+                  label={`Comments ${this.props.post.commentCount}`}
+                  labelPosition="before"        
+                  icon={<i className='material-icons'>add</i>}
+                  onClick={() => { history.push(`/create/${this.props.post.id}/comment`) }}
+                />
+              )} />
+              {this.props.comments.length > 0 && this.props.comments.map((comment) => {
+                return <CommentItem key={comment.id} cid={comment.id} />
+              })}
+              <Divider inset={true}/>
+            </List>
+          )}
+          <Snackbar
+            open={this.state.snackbarOpen}
+            message="Please fill in the form to submit"
+            autoHideDuration={5000}
+            onRequestClose={this.handleRequestClose}
+          />
+        </div>
         )}
-        <Snackbar
-          open={this.state.snackbarOpen}
-          message="Please fill in the form to submit"
-          autoHideDuration={5000}
-          onRequestClose={this.handleRequestClose}
-        />
       </div>
     )
   }
