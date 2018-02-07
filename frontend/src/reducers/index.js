@@ -1,5 +1,6 @@
 import {
   GET_ALL_POSTS,
+  GET_POST,
   GET_POSTS_BY_CATEGORY,
   CREATE_POST_SUCCEEDED,
   DELETE_POST_SUCCEEDED,
@@ -14,6 +15,10 @@ import { combineReducers } from 'redux';
 function posts (state = {}, action) {
   switch (action.type) {
     case GET_ALL_POSTS:
+      return {
+        posts: action.posts
+      }
+    case GET_POST: 
       return {
         posts: action.posts
       }
